@@ -50,7 +50,7 @@ Also, we are going to use http://www.awaitility.org/[Awaitility] for testing SQS
 
 If you are using *Gradle* build tool, you should have the dependencies configured in *build.gradle* file as follows:
 
-[source,groovy]
+[source,groovy,indent=0]
 ----
 include::{codebase}/build.gradle[lines="22..42"]
 ----
@@ -148,7 +148,7 @@ Before writing our test, we need to create a SQS queue and S3 bucket. We can use
 method to create the necessary resources (S3 buckets or SQS queues etc) by using
 *localStack.execInContainer()* API as follows:
 
-[source,java]
+[source,java,indent=0]
 ----
 include::{codebase}/src/test/java/com/testcontainers/demo/MessageListenerTest.java[lines="47..51"]
 ----
