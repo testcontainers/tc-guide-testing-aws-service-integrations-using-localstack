@@ -29,36 +29,36 @@ In this guide, you will learn how to
 == What we are going to achieve in this guide
 We are going to create a Spring Boot application and use https://awspring.io/[Spring Cloud AWS] to work with
 AWS S3 and SQS services. We are going to send a message to an SQS queue and implement a listener
-to consume the messages and save the payload data in a S3 bucket.
+to consume the messages and save the payload data in an S3 bucket.
 We are going to test this application using Testcontainers and https://localstack.cloud/[LocalStack].
 
 == Getting Started
-Spring Cloud AWS provides higher-level abstraction on top of AWS Java SDK V2 and tight integration
+Spring Cloud AWS provides a higher-level abstraction on top of AWS Java SDK V2 and tight integration
 with Spring Boot following the Spring programming model.
 
-LocalStack is a fully functional local cloud stack to develop and test your AWS cloud and 
+LocalStack is a fully functional local cloud emulator to develop and test your AWS cloud and
 serverless applications.
 
-Let's create a Spring Boot application from https://start.spring.io/[Spring Initializr] by selecting *Testcontainers* dependency.
+Let's create a Spring Boot application from https://start.spring.io/#!jvmVersion=17&dependencies=testcontainers[Spring Initializr] by selecting the *Testcontainers* dependency.
 Currently, Spring Cloud AWS starters are not available on Spring Initializr, so we need to manually
 add the required dependencies.
 
-Let's configure *spring-cloud-aws-dependencies* Bill Of Material (BOM) and add *S3*, *SQS* starters.
-Testcontainers provide a https://testcontainers.com/modules/localstack/[LocalStack module]
+Let's add the *spring-cloud-aws-dependencies* Bill Of Material (BOM) to our dependency management
+and add the *S3*, *SQS* starters as dependencies. Testcontainers provides a https://testcontainers.com/modules/localstack/[LocalStack module]
 which we are going to use for testing AWS service integrations.
-Also, we are going to use http://www.awaitility.org/[Awaitility] for testing SQS asynchronous processing.
+Also, we are going to use http://www.awaitility.org/[Awaitility] for testing asynchronous processing with SQS.
 
-If you are using *Gradle* build tool, you should have the dependencies configured in *build.gradle* file as follows:
+If you are using *Gradle* as your build tool, you should have the dependencies configured in *build.gradle* file as follows:
 
 [source,groovy,indent=0]
 ----
 include::{codebase}/build.gradle[lines="22..42"]
 ----
 
-For complete code, please refer to the GitHub repository
+For the complete code, please refer to the GitHub repository
 https://github.com/testcontainers/tc-guide-testing-aws-service-integrations-using-localstack
 
-We are going to work with a SQS queue and S3 bucket. To make the queue and bucket names configurable,
+We are going to work with an SQS queue and S3 bucket. To make the queue and bucket names configurable,
 let's create a configuration properties class as follows:
 
 [source,java]
@@ -66,13 +66,16 @@ let's create a configuration properties class as follows:
 include::{codebase}/src/main/java/com/testcontainers/demo/ApplicationProperties.java[]
 ----
 
+Then we can add *@ConfigurationPropertiesScan* annotation on the main Application class to
+automatically scan for *@ConfigurationProperties* annotated classes and register them as beans.
+
 == Implement StorageService to work with S3 service
 
 Spring Cloud AWS provides higher-level abstractions like *S3Client* and *S3Template*
 with convenience methods for performing the most common tasks such as uploading/downloading files,
-generating signed URLs etc.
+generating signed URLs, etc.
 
-Let us create a *StorageService.java* class to upload and download files using *S3Template* as follows:
+Let us create a *StorageService* class to upload and download files using an *S3Template* as follows:
 
 [source,java]
 ----
@@ -80,10 +83,10 @@ include::{codebase}/src/main/java/com/testcontainers/demo/StorageService.java[]
 ----
 
 == Implement SQS message sender and listener
-Spring Cloud AWS provides higher-level abstraction *SqsTemplate* on top of AWS Java SDK *SqsAsyncClient*
+Spring Cloud AWS provides the higher-level abstraction *SqsTemplate* on top of AWS Java SDK *SqsAsyncClient*
 and *@SqsListener* annotation driven listener support to work with SQS queues.
 
-Let's create a record *Message.java* that represents the message payload we are going to send
+Let's create a record *Message* that represents the message payload we are going to send
 to the SQS queue as follows:
 
 [source,java]
@@ -91,7 +94,7 @@ to the SQS queue as follows:
 include::{codebase}/src/main/java/com/testcontainers/demo/Message.java[]
 ----
 
-Create *MessageSender.java*, which internally uses SqsTemplate, to publish messages to
+Create *MessageSender* class, which internally uses SqsTemplate, to publish messages to
 the SQS queue as follows:
 
 [source,java]
@@ -99,24 +102,23 @@ the SQS queue as follows:
 include::{codebase}/src/main/java/com/testcontainers/demo/MessageSender.java[]
 ----
 
-Create *MessageListener.java* and implement a SQS queue message handler method annotated
+Create *MessageListener* class and implement a SQS queue message handler method annotated
 with *@SqsListener* specifying which queue(s) to listen to.
-
 
 [source,java]
 ----
 include::{codebase}/src/main/java/com/testcontainers/demo/MessageListener.java[]
 ----
 
-Note that we have used *SpEL* expression *$\{app.queue}* to configure the queue name using
+Note that we have used the *SpEL* expression *$\{app.queue}* to configure the queue name using
 the configured property value instead of hard-coding the queue name.
 
 When a message is published to the SQS queue, Spring handles unmarshalling the payload data
-into a *Message* object, and we are uploading the message content into S3 bucket with message's unique key.
+into a *Message* object, and we are uploading the message content into an S3 bucket with the message's unique key.
 
 == Write integration test using LocalStack
-We can spin up a container from https://hub.docker.com/r/localstack/localstack[LocalStack Docker image] and configure the following
-Spring Cloud AWS properties to talk to LocalStack container instead of the actual AWS services.
+We can spin up a container using the https://hub.docker.com/r/localstack/localstack[LocalStack Docker image] and configure the following
+Spring Cloud AWS properties to talk to the LocalStack container instead of the actual AWS services.
 
 [source,properties]
 ----
@@ -129,7 +131,7 @@ spring.cloud.aws.region.static=us-east-1
 
 However, for testing it would be better to use an ephemeral container that starts on a
 random available port so that we can run multiple builds on CI in parallel without having
-port conflict issues. Testcontainers provide a LocalStack module that would help us to achieve this easily.
+port conflict issues. Testcontainers provides a LocalStack module that helps us to achieve this easily.
 
 We can create a SpringBoot integration test that will start a LocalStack container and
 configure the Spring Cloud AWS properties as follows:
