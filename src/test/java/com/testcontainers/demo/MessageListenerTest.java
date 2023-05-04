@@ -6,8 +6,8 @@ import static org.testcontainers.containers.localstack.LocalStackContainer.Servi
 import static org.testcontainers.containers.localstack.LocalStackContainer.Service.SQS;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,10 +66,13 @@ class MessageListenerTest {
         Message message = new Message(UUID.randomUUID(), "Hello World");
         publisher.publish(QUEUE_NAME, message);
 
-        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
-            String msg = storageService.downloadAsString(
-                    properties.bucket(), message.uuid().toString());
-            assertThat(msg).isEqualTo("Hello World");
-        });
+        await().pollInterval(Duration.ofSeconds(2))
+                .atMost(Duration.ofSeconds(10))
+                .ignoreExceptions()
+                .untilAsserted(() -> {
+                    String msg = storageService.downloadAsString(
+                            properties.bucket(), message.uuid().toString());
+                    assertThat(msg).isEqualTo("Hello World");
+                });
     }
 }
