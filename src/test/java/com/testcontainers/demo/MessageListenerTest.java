@@ -32,7 +32,7 @@ class MessageListenerTest {
     @DynamicPropertySource
     static void overrideProperties(DynamicPropertyRegistry registry) {
         registry.add(
-                "spring.cloud.aws.endpoint",
+                "spring.cloud.aws.s3.endpoint",
                 () -> localStack.getEndpointOverride(S3).toString());
         registry.add("spring.cloud.aws.region.static", () -> localStack.getRegion());
         registry.add("spring.cloud.aws.credentials.access-key", () -> localStack.getAccessKey());
