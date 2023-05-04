@@ -136,7 +136,7 @@ configure the Spring Cloud AWS properties as follows:
 
 [source,java]
 ----
-include::{codebase}/src/test/java/com/testcontainers/demo/MessageListenerTest.java[lines="22..48,78"]
+include::{codebase}/src/test/java/com/testcontainers/demo/MessageListenerTest.java[lines="22..45,76"]
 ----
 
 We have used Testcontainers JUnit 5 Extension annotations *@Testcontainers* and *@Container*
@@ -150,7 +150,7 @@ method to create the necessary resources (S3 buckets or SQS queues etc) by using
 
 [source,java]
 ----
-include::{codebase}/src/test/java/com/testcontainers/demo/MessageListenerTest.java[lines="49..53"]
+include::{codebase}/src/test/java/com/testcontainers/demo/MessageListenerTest.java[lines="47..51"]
 ----
 
 We have used *localStack.execInContainer()* API to run commands inside the container and used *awslocal* CLI tool,
