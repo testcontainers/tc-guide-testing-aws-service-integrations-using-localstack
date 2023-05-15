@@ -18,7 +18,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>17</java.version>
         <testcontainers.version>1.18.0</testcontainers.version>
-        <awspring.version>3.0.0</awspring.version>
+        <awspring.version>3.0.1</awspring.version>
     </properties>
 
     <dependencies>
