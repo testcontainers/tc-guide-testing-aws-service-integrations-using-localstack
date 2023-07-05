@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.0.6'
+    id 'org.springframework.boot' version '3.1.1'
     id 'io.spring.dependency-management' version '1.1.0'
     id 'com.diffplug.spotless' version "6.18.0"
 }
@@ -20,8 +20,8 @@ repositories {
 }
 
 ext {
-    set('testcontainersVersion', "1.18.0")
-    set('awspringVersion', "3.0.0")
+    set('testcontainers.version', "1.18.3")
+    set('awspringVersion', "3.0.1")
 }
 
 dependencies {
@@ -36,7 +36,6 @@ dependencies {
 
 dependencyManagement {
     imports {
-        mavenBom "org.testcontainers:testcontainers-bom:${testcontainersVersion}"
         mavenBom "io.awspring.cloud:spring-cloud-aws-dependencies:${awspringVersion}"
     }
 }

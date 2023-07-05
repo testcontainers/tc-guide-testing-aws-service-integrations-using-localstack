@@ -52,7 +52,7 @@ If you are using *Gradle* as your build tool, you should have the dependencies c
 
 [source,groovy,indent=0]
 ----
-include::{codebase}/build.gradle[lines="22..42"]
+include::{codebase}/build.gradle[lines="22..41"]
 ----
 
 For the complete code, please refer to the GitHub repository
@@ -110,7 +110,7 @@ with *@SqsListener* specifying which queue(s) to listen to.
 include::{codebase}/src/main/java/com/testcontainers/demo/MessageListener.java[]
 ----
 
-Note that we have used the *SpEL* expression *${app.queue}* to configure the queue name using
+Note that we have used the Spring's property reference expression *${app.queue}* to configure the queue name using
 the configured property value instead of hard-coding the queue name.
 
 When a message is published to the SQS queue, Spring handles unmarshalling the payload data
@@ -129,7 +129,7 @@ spring.cloud.aws.credentials.secret-key=noop
 spring.cloud.aws.region.static=us-east-1
 ----
 
-However, for testing it would be better to use an ephemeral container that starts on a
+However, for testing, it would be better to use an ephemeral container that starts on a
 random available port so that we can run multiple builds on CI in parallel without having
 port conflict issues. Testcontainers provides a LocalStack module that helps us to achieve this easily.
 
