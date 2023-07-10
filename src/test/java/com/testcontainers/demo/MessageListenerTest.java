@@ -62,7 +62,7 @@ class MessageListenerTest {
     @Test
     void shouldHandleMessageSuccessfully() {
         Message message = new Message(UUID.randomUUID(), "Hello World");
-        publisher.publish(QUEUE_NAME, message);
+        publisher.publish(properties.queue(), message);
 
         await().pollInterval(Duration.ofSeconds(2))
                 .atMost(Duration.ofSeconds(10))

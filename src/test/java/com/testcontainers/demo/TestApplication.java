@@ -5,20 +5,17 @@ import static org.testcontainers.containers.localstack.LocalStackContainer.Servi
 
 import java.util.UUID;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.testcontainers.containers.localstack.LocalStackContainer;
-import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
-@TestConfiguration(proxyBeanMethods = false)
-@Testcontainers
 public class TestApplication {
 
     public static void main(String[] args) {
-        SpringApplication.from(Application::main).with(TestApplication.class).run(args);
+        setup();
+        SpringApplication.from(Application::main).run(args);
     }
 
-    static {
+    static void setup() {
         try {
             var container = new LocalStackContainer(DockerImageName.parse("localstack/localstack:2.0"));
             container.start();

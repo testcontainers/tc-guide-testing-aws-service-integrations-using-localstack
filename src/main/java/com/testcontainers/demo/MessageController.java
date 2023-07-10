@@ -1,8 +1,6 @@
 package com.testcontainers.demo;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,12 +22,8 @@ public class MessageController {
 
     @PostMapping("/api/messages")
     public Map<String, String> create(@RequestBody Message message) {
-        messageSender.publish(properties.bucket(), message);
-        String key = message.uuid().toString();
-        String content = message.content();
-        ByteArrayInputStream is = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));
-        storageService.upload(properties.bucket(), key, is);
-        return Map.of("uuid", key);
+        messageSender.publish(properties.queue(), message);
+        return Map.of("uuid", message.uuid().toString());
     }
 
     @GetMapping("/api/messages/{uuid}")
