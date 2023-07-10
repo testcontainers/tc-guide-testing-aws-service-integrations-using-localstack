@@ -52,7 +52,7 @@ If you are using *Gradle* as your build tool, you should have the dependencies c
 
 [source,groovy,indent=0]
 ----
-include::{codebase}/build.gradle[lines="22..41"]
+include::{codebase}/build.gradle[lines="22..42"]
 ----
 
 For the complete code, please refer to the GitHub repository

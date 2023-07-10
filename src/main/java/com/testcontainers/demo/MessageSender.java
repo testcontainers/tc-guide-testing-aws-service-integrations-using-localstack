@@ -11,7 +11,7 @@ public class MessageSender {
         this.sqsTemplate = sqsTemplate;
     }
 
-    public void publish(String queueName, Object payload) {
-        sqsTemplate.send(to -> to.queue(queueName).payload(payload));
+    public void publish(String queueName, Message message) {
+        sqsTemplate.send(to -> to.queue(queueName).payload(message));
     }
 }
