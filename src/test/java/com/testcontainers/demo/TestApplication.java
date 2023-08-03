@@ -1,8 +1,5 @@
 package com.testcontainers.demo;
 
-import static org.testcontainers.containers.localstack.LocalStackContainer.Service.S3;
-import static org.testcontainers.containers.localstack.LocalStackContainer.Service.SQS;
-
 import java.util.UUID;
 import org.springframework.boot.SpringApplication;
 import org.testcontainers.containers.localstack.LocalStackContainer;
@@ -32,11 +29,7 @@ public class TestApplication {
             System.setProperty("spring.cloud.aws.credentials.access-key", container.getAccessKey());
             System.setProperty("spring.cloud.aws.credentials.secret-key", container.getSecretKey());
             System.setProperty(
-                    "spring.cloud.aws.s3.endpoint",
-                    container.getEndpointOverride(S3).toString());
-            System.setProperty(
-                    "spring.cloud.aws.sqs.endpoint",
-                    container.getEndpointOverride(SQS).toString());
+                    "spring.cloud.aws.endpoint", container.getEndpoint().toString());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
