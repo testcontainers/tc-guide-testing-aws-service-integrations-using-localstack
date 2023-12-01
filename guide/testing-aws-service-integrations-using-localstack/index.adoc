@@ -52,7 +52,7 @@ If you are using *Gradle* as your build tool, you should have the dependencies c
 
 [source,groovy,indent=0]
 ----
-include::{codebase}/build.gradle[lines="22..42"]
+include::{codebase}/build.gradle[lines="22..44"]
 ----
 
 For the complete code, please refer to the GitHub repository
@@ -138,7 +138,7 @@ configure the Spring Cloud AWS properties as follows:
 
 [source,java]
 ----
-include::{codebase}/src/test/java/com/testcontainers/demo/MessageListenerTest.java[lines="22..45,76"]
+include::{codebase}/src/test/java/com/testcontainers/demo/MessageListenerTest.java[lines="22..58,98"]
 ----
 
 We have used Testcontainers JUnit 5 Extension annotations *@Testcontainers* and *@Container*
@@ -152,7 +152,7 @@ method to create the necessary resources (S3 buckets or SQS queues etc) by using
 
 [source,java,indent=0]
 ----
-include::{codebase}/src/test/java/com/testcontainers/demo/MessageListenerTest.java[lines="47..51"]
+include::{codebase}/src/test/java/com/testcontainers/demo/MessageListenerTest.java[lines="60..70"]
 ----
 
 We have used *localStack.execInContainer()* API to run commands inside the container and used *awslocal* CLI tool,

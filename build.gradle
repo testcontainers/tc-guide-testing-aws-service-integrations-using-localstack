@@ -1,8 +1,8 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.1.2'
-    id 'io.spring.dependency-management' version '1.1.2'
-    id 'com.diffplug.spotless' version "6.18.0"
+    id 'org.springframework.boot' version '3.2.0'
+    id 'io.spring.dependency-management' version '1.1.4'
+    id 'com.diffplug.spotless' version "6.23.0"
 }
 
 group = 'com.testcontainers'
@@ -20,8 +20,8 @@ repositories {
 }
 
 ext {
-    set('testcontainers.version', "1.18.3")
-    set('awspringVersion', "3.0.1")
+    set('testcontainers.version', "1.19.3")
+    set('awspringVersion', "3.0.3")
 }
 
 dependencies {
@@ -56,7 +56,13 @@ spotless {
     java {
         importOrder()
         removeUnusedImports()
-        palantirJavaFormat("2.30.0")
+        prettier(['prettier': '3.0.3', 'prettier-plugin-java': '2.3.0'])
+            .config([
+                'parser': 'java',
+                'tabWidth': 2,
+                'printWidth': 80,
+                'plugins': ['prettier-plugin-java']
+            ])
         formatAnnotations()
     }
 }

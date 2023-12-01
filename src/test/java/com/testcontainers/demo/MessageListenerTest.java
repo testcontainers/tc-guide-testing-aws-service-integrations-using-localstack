@@ -23,54 +23,76 @@ import org.testcontainers.utility.DockerImageName;
 @Testcontainers
 class MessageListenerTest {
 
-    @Container
-    static LocalStackContainer localStack = new LocalStackContainer(DockerImageName.parse("localstack/localstack:2.0"));
+  @Container
+  static LocalStackContainer localStack = new LocalStackContainer(
+    DockerImageName.parse("localstack/localstack:3.0")
+  );
 
-    static final String BUCKET_NAME = UUID.randomUUID().toString();
-    static final String QUEUE_NAME = UUID.randomUUID().toString();
+  static final String BUCKET_NAME = UUID.randomUUID().toString();
+  static final String QUEUE_NAME = UUID.randomUUID().toString();
 
-    @DynamicPropertySource
-    static void overrideProperties(DynamicPropertyRegistry registry) {
-        registry.add("app.bucket", () -> BUCKET_NAME);
-        registry.add("app.queue", () -> QUEUE_NAME);
-        registry.add("spring.cloud.aws.region.static", () -> localStack.getRegion());
-        registry.add("spring.cloud.aws.credentials.access-key", () -> localStack.getAccessKey());
-        registry.add("spring.cloud.aws.credentials.secret-key", () -> localStack.getSecretKey());
-        registry.add(
-                "spring.cloud.aws.s3.endpoint",
-                () -> localStack.getEndpointOverride(S3).toString());
-        registry.add(
-                "spring.cloud.aws.sqs.endpoint",
-                () -> localStack.getEndpointOverride(SQS).toString());
-    }
+  @DynamicPropertySource
+  static void overrideProperties(DynamicPropertyRegistry registry) {
+    registry.add("app.bucket", () -> BUCKET_NAME);
+    registry.add("app.queue", () -> QUEUE_NAME);
+    registry.add(
+      "spring.cloud.aws.region.static",
+      () -> localStack.getRegion()
+    );
+    registry.add(
+      "spring.cloud.aws.credentials.access-key",
+      () -> localStack.getAccessKey()
+    );
+    registry.add(
+      "spring.cloud.aws.credentials.secret-key",
+      () -> localStack.getSecretKey()
+    );
+    registry.add(
+      "spring.cloud.aws.s3.endpoint",
+      () -> localStack.getEndpointOverride(S3).toString()
+    );
+    registry.add(
+      "spring.cloud.aws.sqs.endpoint",
+      () -> localStack.getEndpointOverride(SQS).toString()
+    );
+  }
 
-    @BeforeAll
-    static void beforeAll() throws IOException, InterruptedException {
-        localStack.execInContainer("awslocal", "s3", "mb", "s3://" + BUCKET_NAME);
-        localStack.execInContainer("awslocal", "sqs", "create-queue", "--queue-name", QUEUE_NAME);
-    }
+  @BeforeAll
+  static void beforeAll() throws IOException, InterruptedException {
+    localStack.execInContainer("awslocal", "s3", "mb", "s3://" + BUCKET_NAME);
+    localStack.execInContainer(
+      "awslocal",
+      "sqs",
+      "create-queue",
+      "--queue-name",
+      QUEUE_NAME
+    );
+  }
 
-    @Autowired
-    StorageService storageService;
+  @Autowired
+  StorageService storageService;
 
-    @Autowired
-    MessageSender publisher;
+  @Autowired
+  MessageSender publisher;
 
-    @Autowired
-    ApplicationProperties properties;
+  @Autowired
+  ApplicationProperties properties;
 
-    @Test
-    void shouldHandleMessageSuccessfully() {
-        Message message = new Message(UUID.randomUUID(), "Hello World");
-        publisher.publish(properties.queue(), message);
+  @Test
+  void shouldHandleMessageSuccessfully() {
+    Message message = new Message(UUID.randomUUID(), "Hello World");
+    publisher.publish(properties.queue(), message);
 
-        await().pollInterval(Duration.ofSeconds(2))
-                .atMost(Duration.ofSeconds(10))
-                .ignoreExceptions()
-                .untilAsserted(() -> {
-                    String msg = storageService.downloadAsString(
-                            properties.bucket(), message.uuid().toString());
-                    assertThat(msg).isEqualTo("Hello World");
-                });
-    }
+    await()
+      .pollInterval(Duration.ofSeconds(2))
+      .atMost(Duration.ofSeconds(10))
+      .ignoreExceptions()
+      .untilAsserted(() -> {
+        String msg = storageService.downloadAsString(
+          properties.bucket(),
+          message.uuid().toString()
+        );
+        assertThat(msg).isEqualTo("Hello World");
+      });
+  }
 }
